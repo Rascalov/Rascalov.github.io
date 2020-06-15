@@ -40,7 +40,14 @@ results in barely any latency, now I have to get it outside to watch the front d
 I put my pi in a plastic case and put that in a medium-sized box I got from an action figure sale. 
 The figure was a chinese knockoff, but the box was decent. 
 
+Here's the box:
+
 <img src="https://github.com/Rascalov/Rascalov.github.io/blob/master/images/index.jpeg" width="500" height="350">
+
+
+With an opening:
+
+<img src="https://github.com/Rascalov/Rascalov.github.io/blob/master/images/flatbox.jpeg" width="500" height="350">
 
 
    
