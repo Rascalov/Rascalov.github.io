@@ -42,12 +42,12 @@ The figure was a chinese knockoff, but the box was decent.
 
 Here's the box:
 
-<img src="https://github.com/Rascalov/Rascalov.github.io/blob/master/images/index.jpeg" width="500" height="350">
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/index.jpeg" width="500" height="350">
 
 
 With an opening:
 
-<img src="https://github.com/Rascalov/Rascalov.github.io/blob/master/images/flatbox.jpeg" width="500" height="350">
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/flatbox.jpeg" width="500" height="350">
 
 
    
