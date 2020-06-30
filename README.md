@@ -14,8 +14,59 @@ Dynamic routing (rip2) maakt dit makkelijker door direct verbonden routers elkaa
 
 
 ## Moodle Automatic File Retriever (MAFR)
-Het meeste van Mafr verbetering is te vinden op haar github. Ik heb nauwelijks de wil om ermee door te gaan.
-Interesse is laag en uitwerking is vanaf het begin al flawed.  
+2020-06-30
+
+I realized that no one will ever use my creation. No matter what source code I hand over and what I might say, people are not comfortable
+inserting their credentials. 
+
+I keep reminding myself of this every time I look at MAFR. It's the only thing I made that I felt kinda good about. Doing a GTAV mod was cool,
+but nothing special. MAFR could help a lot of future students of Inholland University of Applied Sciences. If only I would polish it.
+
+So I will, but there are challenges.
+
+### What needs to be done?
+An answer I do not have, but I have theories:
+
+* Remove the login requirement
+* Create a graphical interface
+* Optimize the file acquisition proces 
+
+Removing the login is what I believe will help directly. 
+
+This does beg the question: "How the fuck would anything work then?"
+
+I cannot just give session cookies to clients from my own login. Any person could just put those credentials into their browser
+and fuck my account up. 
+
+From what I read, this is a situation where the use of a **server-client infrastructure** is warranted.  
+
+#### What does MAFR do again?
+In order to figure out what the **Server's** and **Client's** responsibilities are, I need to recap to myself the idea of MAFR.
+
+First the login, then check if there's access to the course, if not, enroll. Then determine the structure of the course. 
+Then check all files per section and index them. Finally, per file, we attempt to download the content.
+
+Updating follows more or less the same steps, except it checks the last-modified date before downloading. 
+  
+
+#### Server
+The server has the credentials. Users can set up their own or use the one I set up.
+Server is responsible for:
+* Login
+* Determining and returning the folder structure
+* Return content of a section
+* Handle and download requested links
+
+#### Client
+The Client's controlled by the end-user. It'll communicate with the server through api calls. 
+Client must enter the server url and the password of the server. Which the server host should give. 
+* Json data received will be parsed to folders when calling for the structure.
+* 
+
+I'll continue later...
+ 
+ 
+
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
 ## NoSQL theorie
