@@ -60,10 +60,30 @@ Server is responsible for:
 #### Client
 The Client's controlled by the end-user. It'll communicate with the server through api calls. 
 Client must enter the server url and the password of the server. Which the server host should give. 
-* Json data received will be parsed to folders when calling for the structure.
-* 
+Apart from that, the client's only purpose is to send requests handle the responses given by the server. 
 
-I'll continue later...
+2020-07-01
+
+The client's UI is still up for debate, even though it is probably going to be very straightforward and (decently) clean.
+
+A few logos, some input and you got half the appeal and functionality. 
+
+The folder structure determination that I implemented on MAFR 1.5 is an unstable and inefficient way to determine.
+Improving it means I have to concentrate on the html. More than I ever did. My brain wasn't made for looking at html with 
+obfuscated classes and id's.
+
+I give the user 2 options:
+* Literal: Folder structure exactly as it's shown on Moodle
+* Simple: Section folders only have 1 subfolder level.
+
+Main reason for these options is because the ones that create the courses have a hard time structuring it properly, 
+so the user has to decide which option will work for the course.  
+
+#### The structure
+This image explains most of it:
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.jpeg" width="500" height="350">
+
+
  
  
 
