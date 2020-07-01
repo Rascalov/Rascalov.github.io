@@ -88,7 +88,26 @@ Then, once you select a course subject, it opens the submenus:
 
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure2.png" width="600" height="350">
 
+The script calls distinguish the subfolders by giving them section-Id's. The attribute calls them like so: ``data-section=1``    
 
+This is a regular situation, you might've already guessed based on the ``list-group-submenu-level-1`` that subfolders can have their own subfolders. Level-2, 3 etc. So you have to take that into account.
+
+Below is an example:
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure3.png" width="600" height="350">
+
+Notice how level 2 is enveloped in ``<div>`` instead of the usual ``<a>``.
+That means his section-id and potential submenus are present there.
+
+((Bonus: The picture above is what I mean when I say the course creators fuck up the 
+subfolders. Papers/journal articles have no places underneath the slides folder.
+They should've been a level-1 folder.)) 
+
+Given these pictures, this means that, per section, we must check for multiple levels.
+Once the levels are counted, you can loop the folder creation until the levels run out. 
+
+
+ 
 
  
  
