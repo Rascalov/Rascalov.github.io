@@ -81,7 +81,13 @@ so the user has to decide which option will work for the course.
 
 #### The structure
 This image explains most of it:
-<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.jpeg" width="500" height="350">
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.png" width="600" height="350">
+
+Then, once you select a course subject, it opens the submenus:
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure2.png" width="600" height="350">
+
 
 
  
