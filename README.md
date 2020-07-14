@@ -96,21 +96,161 @@ Below is an example:
 
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure3.png" width="600" height="350">
 
-Notice how level 2 is enveloped in ``<div>`` instead of the usual ``<a>``.
+Notice how level 2 is enveloped in a ``<div>`` instead of the usual ``<a>``.
 That means his section-id and potential submenus are present there.
 
 ((Bonus: The picture above is what I mean when I say the course creators fuck up the 
-subfolders. Papers/journal articles have no places underneath the slides folder.
-They should've been a level-1 folder.)) 
+subfolders. Papers/journal articles has no place underneath the slides folder.
+It should've been a level-1 folder.)) 
 
 Given these pictures, this means that, per section, we must check for multiple levels.
 Once the levels are counted, you can loop the folder creation until the levels run out. 
 
+2020-07-07: 
 
- 
+Didn't work much on MAFR and just got news that I fucked up my 2nd year. So yeah, might as well continue. 
+Since the rest doesn't seem to work out.
 
+I had an important realization: "Why should the server determine the structure and all that?"
+There's no real reason to, as the client should do the heavy lifting, and the server just provides what 
+the client can't  access. 
+
+So the new plan is to make the server have calls to required resources. As such:
+* GET the \<ul> mapping for the Folder Structure. 
+* GET the content Section html
+* HEAD the pages and return the cookies.
+* POST the download requests and return the input stream.   
+
+of course, the client will probably use POST for all these requests for the calls
+but maybe it could just be all GET methods. 
+
+With a few parameters:
+* CourseId
+* SectionId
+
+
+#### The actual structure
+So, 
+
+The Server will have the following calls
+* GET /structure | gets the structure html for the client to parse to folders (params: CourseId)
+* GET /content  | gets the section content (params: CourseId, SectionId)
+* POST /download | downloads and returns the inputStream (params: body: downloadLink)
+* POST /visit | needs a few filters to make sure people don't use it to visit weird pages and info pages on the 
+account. It enables looking at certain pages required to find download links. 
+* GET /peek 
  
+#### A quick note on downloading
+Moodle downloads usually happen through a php script, something HtmlUnit picks up on, but I haven't seen 
+Jsoup getting that right. Jsoup is not meant for what the browser does
+
+#### The enrolment structure
+Another problem with the server is that different students use it for different courses. 
+
+The first check can be done with Jsoup. The body id must be `page-enrol-index`. If that is the case,
+we can 
+
+There are 4 possibilities:  
+* You can enroll without a key
+* You can enroll with a key
+* You cannot enroll
+* course does not exist
+
+I need to find the cues that indicate which of the three is applicable. But in general,
+bullet 2, 3 and 4 are the same error in this scope.  
+
+I see a button with class=continuebutton in bullet 3 and 4
+
+bullet 1 has a button with "Enrol me" as value, but so does bullet 2
+
+I can check if the Continue button exist OR the key input field exitst.
+If one of those conditions are met, then throw the error that we can't access the course.
+
+so the first check (with jsoup)
+
+2020-06-14:
+
+I made my first Jsoup enrollment post. feels good. Might be able to phase out HtmlUnit all together one day. 
+
+Potential problem: Someone asks structure, need relog **and** not enrolled. What happens? check twice? 
+fixed it now, the checks are done seperately. 
+
+#### The Client layout
+Never thought I'd finish the server side, but I kinda did. 
+
+So the client is what connects to the server and asks for stuff. 
+
+User wants to Connect to a server, download their course, and keep it up to date.
+A user might want to download/update multiple courses. 
+
+So 1 text box for the server url and 1 for password
+
+
+## Docker
+Wtf is the big deal about this shit? Never understood its goal, but fuck it. A lot of employers pay you
+if you understand how to work with it. So I will attempt to get the hang of it. 
+
+I torrented the "Docker zero to Hero" course. It's given by some Spanish devops dude. It has subtitles, so I 
+don't care, an Indian could give it for all I care.   
+
+There are 7 or so chapters. I'm going to watch each chapter and attempt to document what I learn from it here.
+
+So docker enables you to deploy shit from containers, from what I understand, it means you can containerize
+something and make use of it somewhere else as long as it has docker.
+
+Seems cool, I could make some shit and put it in a container with dependencies and give it as an image(?).
+
+I've heard it's more DevOps and less programming, but fuck it. No one seems to give a fuck about
+the shit I create, so might as well see if this can make some shit possible.
+
+### Chapter 1 Introduction
+#### 1.1 What is Docker?
+Jeez, the H sound comes out of his throat like a Russian, хелло, энд велкам. 
+
+He says Docker is a tool to create, deploy and run applications by using containers. 
+The container is 1 package with all dependencies and shit. 
+
+He shows himself ssh'ing into some server and deploying a docker image. Then destroys it soon after. 
+Seems cool, instant deployment and instant removal, but doubt his image is anything heavy. 
+
+He performs this line: 
+
+`docker run -d -p 1010:80 nginx:alpine`
+
+-d I guess means deploy and -p specifies port of the server. nginx is a webserver so I guess that is what
+he deploys. 
+
+He proves that it is running by typing in this:
+
+`docker ps -l`
+
+`-l` I assume means list them, but allah knows what `ps` means.
+
+He removes it with this
+
+`docker rm -fv id` 
+
+the id was some CONTAINER ID he viewed with his list command. 
+Don't know what `-fv` means, but fuck it, he'll tell me eventually
+
+End of paragraph.
+
+#### 1.2 What is a container?
+He's gonna paint, oh boy.
+
+He says a Container is just a process which is isolated (in a sandbox) in what they call a **namespace**.
+
+**namespace** is the id or the name of the process. 
+
+Then he talks about something called **C groups**, they allow you to limit the resources like cpu power and such.
+He says limit, but probably means control. Same thing I guess, but limiting a resource sounds weird to me 
+if you try to spin it as a positive.
  
+Here's the image he drew:
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/Container1.2.png" width="500" height="350">
+
+
+
 
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
