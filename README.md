@@ -272,7 +272,9 @@ Here's the image he drew:
 
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/1.3ImageLayers.png" width="500" height="350">
 
+end of paragraph
 
+#### 1.4 Containers vs vi
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
 ## NoSQL theorie
