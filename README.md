@@ -274,7 +274,8 @@ Here's the image he drew:
 
 end of paragraph
 
-#### 1.4 Containers vs vi
+#### 1.4 Containers vs virtual machines
+
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
 ## NoSQL theorie
