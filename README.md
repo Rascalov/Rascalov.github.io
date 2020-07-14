@@ -247,9 +247,30 @@ He says limit, but probably means control. Same thing I guess, but limiting a re
 if you try to spin it as a positive.
  
 Here's the image he drew:
+
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/Container1.2.png" width="500" height="350">
 
+end of paragraph
 
+#### 1.3 What is an Image?
+He recycles picture above ^
+
+He says an image consists of layers. 
+Every image starts with something he calls **Scratch**.
+
+On top of it comes the operating system? He shows CentOs as the next layer so I assume that means he 
+uses the libraries and other files from CentOs as a basis for his image?
+
+In the next layer he puts in a process, in this case some Apache stuff. 
+
+He calls this a Parent-Child relationship. A child can be a parent of another child who can also be a parent
+and so on.
+
+He puts up a fourth layer as a child of Apache, something called cache, probably just an example. 
+
+Here's the image he drew:
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/1.3ImageLayers.png" width="500" height="350">
 
 
 ## ITSM theorie
