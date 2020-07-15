@@ -275,7 +275,75 @@ Here's the image he drew:
 end of paragraph
 
 #### 1.4 Containers vs virtual machines
-let's do this.
+He shows an image with showing container and vm properties. 
+
+Virtual machines each have their own guest os. So resources are saved with 
+containers. He claims the best thing about docker is that you could destroy the containers instantly.
+
+Here's the image he referred to:
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/1.4Comparison.png" width="500" height="350">
+
+End of paragraph.
+
+#### 1.5 Basics of a Docker file. 
+He refers back to the docker image. According to him, we need to make a docker file.
+A docker file is a plain text file where you define the instructions to create your image.
+
+According to him, the file usually starts like this:
+
+FROM operating_system_name
+RUN = install the software you want through the selected os' package manager.
+CMD = the command to execute after container creation. 
+
+This is all he says currently, more in the future.
+
+The example file he gave:
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/1.5DockerFile.png" width="500" height="350">
+
+end of paragraph.
+
+#### 1.6 Docker's architecture
+
+He shows an image of a Docker host?
+
+Docker host is anything that runs a docker server.  
+The Docker host contains:
+
+The docker daemon: the process that is started once you set up docker.
+
+REST API: communication to the daemon
+
+CLI: You typing commands to the API. 
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/1.6DockerHost.png" width="500" height="350">
+
+End of paragraph
+
+#### 1.7 Layering in Docker
+He shows an image composed by layers. 
+The instructions from last video could be considered layers. 
+They are read only layers. Instead you can create another layer on top of the 
+desired layer. 
+
+If you want to update it, you can create a new image starting from a specific layer.
+
+So you basically version your images. 
+
+He ends with this image:
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/1.7Layering.png" width="500" height="350">
+
+
+So far Chapter 1 is very basic. But that's probably not a bad thing. His accent fucks 
+up some words, but it's understandable with the generated subtitles.
+
+End of paragraph.
+
+End of Chapter 1. 
+
+### Chapter 2 Ready, Let's head to the installation. 
 
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
