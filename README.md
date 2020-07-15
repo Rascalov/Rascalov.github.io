@@ -275,6 +275,7 @@ Here's the image he drew:
 end of paragraph
 
 #### 1.4 Containers vs virtual machines
+let's do this.
 
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
