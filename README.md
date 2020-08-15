@@ -229,27 +229,54 @@ This is an image of the form element with the hidden inputs:
 
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/EnrollmentElements.png" alt="Form Elements">
 
+So we need to incorporate these values into our request for enrollment. 
+
+I did the request in `Jsoup`, but `HttpURLConnection` should be fine as well.
+
+````
+Jsoup.connect("https://moodle.inholland.nl/enrol/index.php")
+    .method(Connection.Method.POST)
+    .cookies(MoodleCredentials.sessionCookies)
+    .followRedirects(true)
+    .userAgent("Mozilla")
+    .timeout(3000)
+    .data("id", doc.selectFirst("input[name=id]").val())
+    .data("instance", doc.selectFirst("input[name=instance]").val())
+    .data("sesskey", MoodleCredentials.sessKey)
+    .data(element.select("input[type=hidden]").get(3).attr("name"), element.select("input[type=hidden]").get(3).val())
+    .data("mform_isexpanded_id_selfheader", "1")
+    .data("submitbutton", "Enrol+me")
+    .post();
+````
+The result is a fast enrollment process between 0.5 and 1.5 seconds. 
+
+You can also just use `.execute` as long as you set the `Connection.Method` as `POST`.
 
 
+#### 3. Determine structure of the Course
+Without the structure, you might as well keep the files on moodle.
 
-2020-07-01
+I will write about the 2 types of courses used and how to determine the folder structure. 
 
-The client's UI is still up for debate, even though it is probably going to be very straightforward and (decently) clean.
+#### 3.1 Two types of courses
 
-A few logos, some input and you got half the appeal and functionality. 
+My first console app for moodle assumed that only 1 course structure existed:
 
-The folder structure determination that I implemented on MAFR 1.5 is an unstable and inefficient way to determine.
-Improving it means I have to concentrate on the html. More than I ever did. My brain wasn't made for looking at html with 
-obfuscated classes and id's.
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.png" alt="Course structure 1">
 
-I give the user 2 options:
-* Literal: Folder structure exactly as it's shown on Moodle
-* Simple: Section folders only have 1 subfolder level.
+1 menu, with folders. 
 
-Main reason for these options is because the ones that create the courses have a hard time structuring it properly, 
-so the user has to decide which option will work for the course.  
+But, looking into other courses from other moodle categories, I discovered another structure:
 
-#### The structure
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/ModernStructure.png" alt="Course structure 1">
+
+A menu on top, each menu item has its own side menu. In my opinion this structure is superior to the former. 
+To think the IT category still uses the former structure. 
+
+Anyhow, I started with dissecting the menu each own has.
+
+##### 3.2 Menu structure
+
 This image explains most of it:
 
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.png" width="600" height="350">
@@ -274,93 +301,87 @@ subfolders. Papers/journal articles has no place underneath the slides folder.
 It should've been a level-1 folder.)) 
 
 Given these pictures, this means that, per section, we must check for multiple levels.
-Once the levels are counted, you can loop the folder creation until the levels run out. 
+If more levels are present, I loop the method until all levels have been accounted for. 
 
-2020-07-07: 
+###### 3.2.1 Some code 
+This is all client side, as the server only needs to return the html of the course page once!
 
-Didn't work much on MAFR and just got news that I fucked up my 2nd year. So yeah, might as well continue. 
-Since the rest doesn't seem to work out.
+````
+private MoodleFolder getLiteralStructure(MoodleFolder mainfolder, Element courseSubjects){
+    // get all the folders of the menu
+    var children = courseSubjects.children();
+    for (Element subject : children ){ // loop over them to get data-section and name
+        var subjectElement = subject.select(".mt-heading-btn").get(0);
+        MoodleFolder subjectFolder = new MoodleFolder(subjectElement.text(), Integer.parseInt(subjectElement.attr("data-section")));
+        System.out.println(subjectFolder.getName() + " Is the Subject Folder");
+        if(subject.children().size() > 1){
+            // if true, we use this method again to determine additional folders.
+            var subjectBody =  subject.child(1).child(0).child(0);
+            subjectFolder.getMoodleFolders().addAll(getSubfolders(subjectBody));
+        }
+        mainfolder.getMoodleFolders().add(subjectFolder);
+        System.out.println("-----------------------------------------------------------------------------");
+    }
+    return mainfolder;
+}
+List<MoodleFolder> getSubfolders(Element sublevelList){
+    // Handle additional subfolders and, sometimes, subfolders within subfolders (aka multi-level folders).
+    List<MoodleFolder> moodleFolders = new ArrayList<>();
+    MoodleFolder folder = null; // Matriarch folder in case of multi-level folders
+    for(Element section : sublevelList.children()){
+        if(section.is("a")){
+            folder = new MoodleFolder(section.text(), Integer.parseInt(section.attr("data-section")));
+            moodleFolders.add(folder);
+        }
+        else if(section.is("div"))
+            // Sub folder has a subfolder, so repeat the method.
+            moodleFolders.get(moodleFolders.indexOf(folder)).getMoodleFolders().addAll(getSubfolders(section));
+    }
+    return moodleFolders;
+}
 
+````
 
- 
-#### A quick note on downloading
-Moodle downloads usually happen through a php script, something HtmlUnit picks up on, but I haven't seen 
-Jsoup getting that right. Jsoup is not meant for what the browser does
+##### 3.3 Handling the second structure
+This structure contains a row of buttons that each have their own menu.
 
-#### The enrolment structure
-Another problem with the server is that different students use it for different courses. 
+I will call these buttons "Row-Buttons". I do prize myself for my creative naming. 
 
-The first check can be done with Jsoup. The body id must be `page-enrol-index`. If that is the case,
-we can 
+I need to make a "wrapper" that first checks for this structure and if it is found, handle it.
 
-There are 4 possibilities:  
-* You can enroll without a key
-* You can enroll with a key
-* You cannot enroll
-* course does not exist
+The way they connect these menus with the Row-Buttons, is with a `data-pane` attribute value. Which is a number. 
+I might be able to use this.
 
-I need to find the cues that indicate which of the three is applicable. But in general,
-bullet 2, 3 and 4 are the same error in this scope.  
+I can get each Row-Button's `data-pane` value, and then, in the folder of that Row-Button, I will invoke my already 
+constructed methods to index that connected mt-menu.
 
-I see a button with `class=continuebutton` in bullet 3 and 4
+Like so:
+````
+if(doc.selectFirst("ul.mt-topmenu") != null){
+    for (Element menuOption : doc.selectFirst("ul.mt-topmenu").select("a")){
+        String folderName = menuOption.selectFirst("span.mt-btn-text").text();
+        String dataPane = menuOption.attr("data-pane");
+        Element mtMenu = doc.selectFirst("div[data-pane=" + dataPane + "]");
+        MoodleFolder menuFolder = new MoodleFolder(folderName, Integer.parseInt(menuOption.attr("data-section")));
+        if(mtMenu.select("div.mt-sidemenu") != null) // if it has a menu, use the method I showed in 3.2
+            menuFolder = getLiteralStructure(menuFolder, mtMenu.selectFirst("div.mt-sitemenus"));
+        mainFolder.getMoodleFolders().add(menuFolder);
+    }
+}
+````
+With this, I can determine the structure of 99% of all courses a student can access on the Inholland Moodle environment.
 
-bullet 1 has a button with "Enrol me" as value, but so does bullet 2
+#### 4. Index Files
+How the server requests the content per section you can see in the github. It uses the `data-section` attributes
+gathered while structuring.
 
-I can check if the Continue button exists, OR the key input field exists.
-If one of those conditions have been met, then throw the error that we can't access the course.
+What matters is how the Client will handle the HTML and look through it to find the files.
 
-so the first check (with jsoup)
+The File a teacher uploads to moodle is usually characterized by something called a `mod-type`
+There are a lot of mod-types, really, a lot.
 
-2020-06-14:
-
-I made my first Jsoup enrollment post. feels good. Might be able to phase out HtmlUnit all together one day. 
-
-Potential problem: Someone asks structure, need relog **and** not enrolled. What happens? check twice? 
-fixed it now, the checks are done seperately. 
-
-#### The Client layout
-Never thought I'd finish the server side, but I kinda did. 
-
-So the client is what connects to the server and asks for stuff. 
-
-User wants to Connect to a server, download their course, and keep it up to date.
-A user might want to download/update multiple courses. 
-
-I also want the client to save what the user set up to update and download when closing.
-That would make it easier for the user to open Mafr and resume updating courses. 
-
-So I figured something out, and made it look a bit similar to the Inholland Moodle stuff:
-
-<img>
-
-And here's the little icon:
-
-<img>
-
-
-This design should cover all that I want to do on the front end. 
-
-#### The new indexing of files.
-I have been thinking about this since I made mafr 1.5. The current way of files is
-very mediocre. I merely check all `<a>` links and if they are downloadable, I download them.
-
-There are a few downsides to it that make it unsustainable:
-* Videos can be embedded without `<a>` tag
-* images can just be `<img source=>` without `<a>` tag
-* Some `<a>` links have text underneath that must be caught as well.
-
-These are the 3 I discovered, as I look at more courses, I'll probably find more downsides.
-
-As I said on the github, Text is a unique challenge on its own, as it is not a file, but merely a big string, 
-it has no Last-Modified or other HTTP headers. Unlike videos and Images.
-
-I can update based on text, if the new one does not equal the text of the older one. Might work, might not.
-It will depend on how I name the text files. 
-Which is another problem. I'll talk about that later.
-
-##### Mod-type based indexing
-from my github:
-
+To name a few:
+    
     modtype_resource: holds one(?) link to a resource
     modtype_label: holds text without resource links, though could include links. Usually used for Header Titles
     modtype_book: Holds a video(?) in a seperate window
@@ -370,92 +391,239 @@ from my github:
     modtype_page: Holds a text file, some have a Last-Modified in string format
     modtype_url: Holds url should be saved as a textfile
     modtype_wiki: Holds a page where Groups can create their own wikipedia like page.
+    modtype_feedback: Holds a feedback link to a document you uploaded for review.
     modtype_groupselect: Holds a list of group members, can be saved as textfile
-    
-    Every mod type can have text, no matter what they convey (save for modtype_label, that's its entire purpose)
-    
-    For every li there should be a text file, the text file would have the name of either the resource it is associated with OR, in case it has none of that, its first p tag textcontent will be the filename.
-    
-    After a Title (h3), its possible for there to be a "summary" class, which contains text about the folder. The title of these textfiles should be equal to the title of which they summarize (so, the h3 tag).
-    
-    modtype_label has a class "contentwithoutlink", which holds all the text. You need to get all the text, but also look voor ahref tags, if they embed them on a word, you have to seperate that, if not, it will get stored in the text file without worries.
-    
-    Other modtypes have divs that hold the text before (NOT SEEN YET, BUT COULD EXIST) and after the resource link.
-    
-    The after class is "contentafterlink", its title should be the "TEXT" + resource_name text value.
+There are more, but I have yet to determine what their usages are
 
-So I have multiple types to handle. 
-Should I do this in classes? Should I do this in one big Switch statement? I do not know yet.
+This part frustrated me for quite some time. I don't want to make a case for every `mod-type` and download them all 
+in a different way. Too much work for so little. Most students only have concern for resource files like pdf, 
+word files and so on. Which 80% of the time is held within `modtype_resource`
 
-Some mod-types require the making of new folders and indexing the files and text in there. 
+Text files are also annoying, as they must be indexed and downloaded differently, and could not be updatable with 
+a Last-Modified header.
 
-I could just make methods within the same class. With a big switch statement. 
+So I came up with a solution that would save me some work.
 
-#### You know what
-fuck it, the text problem can be solved by saving the entire content section as a html file. 
+##### 4.1 The snapshot.html
+The idea is simple, all the content from a section will be saved as an HTML file.
+Text will keep its html formatting and all the mod-types will remain accesible throught the snapshot. 
 
-All formatting will be kept and all embedded information is accessible.
-I will call it a "snapshot". Individual label mod-types will still be downloaded as text.
+For example, a section with only Assignment mod-types will do no good when saved as files. But with the snapshot,
+you can look at them and go to the assignment link whenever desirable. Without it being a nuisance as a file.
 
-#### Indexing images and videos (and other irregular embeds)
-As there are elements that are exclusively embedded onto the section, I made a method that handles images
-and videos. Images are on every section in the form of icons. Which I need to avoid. 
+Usually, a student has been logged in to Moodle anyway while using this program, so they can visit the links 
+in the snapshots without an issue.  
 
-Currently, I loop over the images and if they have no class attribute, it is to be downloaded. 
-I am looking for a css selector that selects all images with no class attribute. 
-That would really speed up the indexing. 
+##### 4.2 Indexing resource files
+The idea of indexing the files is to put each discovered file into a list which will be downloaded at the end. 
 
-Alright, 5 minutes later I figured out css selectors have a `:not()` option.
-So I can ignore the class attribute with `img:not([class])`. Pretty neat. 
+First things first, images and videos I consider "exceptional content" as it can be embedded into the section without
+its own page.
 
-However, I have seen images in resource files that have the class "resource"
-So I have to edit the selector to `img[src^=https://moodle.inholland.nl/pluginfile.php]`
-This ensures I get every image that is a plugin file and not a theme file like the icons. 
+So I check for those kinds of files first like so:
 
-#### indexing mod-type folder files
-the folder mod type is a special map where you can put files. They can be either embedded into the section, or have their
-own page. 
+````
+private List<MoodleFile> getExceptionalContent(Document doc) {
+    // It has been proven that images and videos can be embedded in multiple, if not all, mod-types.
+    // No doubt there will be more resources that will fit this criteria,
+    // therefore the method name is very generalized.
+    var moodleFiles = new ArrayList<MoodleFile>();
+    for(var video : doc.select("video")){
+        String url = video.selectFirst("source").attr("src");
+        moodleFiles.add(getFile(peek(url), url));
+    }
+    for (var image : doc.select("img[src^=https://moodle.inholland.nl/pluginfile.php]")){
+        String url = image.attr("src");
+        moodleFiles.add(getFile(peek(url), url));
+    }
+    return moodleFiles;
+}
+````
+This is used in the section, as well as in the page mod-type and (rarely) in resource mod-types. 
 
-This is a folder with its own page:
+Resource files will be obtained by visiting their pages and determining the resource url from a number of
+places that I have observed contain those resource links.
 
-<img alt="image folder own page">
+````
+private MoodleFolder getPotentialResourceFiles(Element li, MoodleFolder folder) {
+    String link = li.selectFirst("a").attr("href");
+    var peekDoc = peek(link);
+    MoodleFile resourceFile = null;
+    if(peekDoc.get("Content-Disposition")!=null) // if true, it is downloadable
+        resourceFile = getFile(peekDoc, link);
+    else {
+        Document doc = visit(link + "&forceview=1");
+        var workaround = doc.selectFirst("div.resourceworkaround");
+        var iframeResource = doc.selectFirst("iframe#resourceobject");
+        var objectResource = doc.selectFirst("object#resourceobject");
+        if(workaround != null)
+            resourceFile = getFile(peek(workaround.selectFirst("a").attr("href")),workaround.selectFirst("a").attr("href"));
+        else if(iframeResource != null)
+            resourceFile = getFile(peek(iframeResource.attr("src")),iframeResource.attr("src"));
+        else if(objectResource != null)
+            resourceFile = getFile(peek(objectResource.attr("data")),objectResource.attr("data"));
+        else {
+            // I discovered resource files with no files but rather images and text
+            Element main = doc.selectFirst("div[role=main]");
+            folder.getMoodleFiles().addAll(getExceptionalContent(Jsoup.parse(main.html())));
+            resourceFile = new MoodleTextFile(main.html(),"");
+            resourceFile.setName(main.selectFirst("h2").text());
+        }
+    }
+    if(resourceFile != null){
+        folder.getMoodleFiles().add(resourceFile);
+    }
+    else {
+        System.out.println("A null file was given, ignoring...");
+    }
+    return folder;
+}
+````
 
-And this is a folder embedded to the section:
+##### 4.3 Indexing Folder mod-types
 
-<img alt="image folder embedded">
+Folder mod-types are weird, I don't know why it exists. It's basically a glorified subject folder.  
 
-In both cases, a new folder should be made equal to the name of the folder.
+Nonetheless, it has two forms:
 
-There is a case where there are multiple folders, but I lost the course which made use of that. 
+1: Own page
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/folderOwnPage.png">
+
+2: Embedded onto the section
+
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/EmbeddedFolder.png">
+
+Folder pages can have images, videos, text and all other kinds of stuff.
+So I need to use reuse the `getExceptionalContent()` method and create a snapshot.
+
+I have only ever seen folders that look like the image above. So I won't bother
+creating a folder structure for it apart from the initial folder.
+
+As for the files, they seem to always be `<a>` tags without a class.
+So I'll use the css selector `:not([class])` the index them.
+
+The result:
+
+````
+private MoodleFolder getPotentialFolderFiles(Element li, MoodleFolder folder) {
+    List<MoodleFile> folderFiles = new ArrayList<>();
+    String folderName;
+    Element folderMain;
+    // check if either link or embedded, which affect the folder name and element to take files and snapshot from.
+    if(li.selectFirst("a[href^=https://moodle.inholland.nl/mod/folder/view]") == null){
+        folderName = li.selectFirst("span.fp-filename").text();
+        folderMain = li;
+    }else{
+        folderMain = visit(li.selectFirst("a").attr("href")).selectFirst("div[role=main]");
+        folderName = folderMain.selectFirst("h2").text();
+    }
+    var snapshotFile = new MoodleTextFile(folderMain.html(), "");
+    snapshotFile.setName(folderName.replaceAll("[^a-zA-Z0-9\\.\\-]", "-"));
+    folderFiles.add(snapshotFile);
+    for (var downloadLink : folderMain.selectFirst("div.filemanager").select("a:not([class])")){
+        folderFiles.add(getFile(peek(downloadLink.attr("href")), downloadLink.attr("href")));
+    }
+    MoodleFolder folderMod = new MoodleFolder(folderName);
+    // user folderMod.getName instead of folderName, because the prior is sanitized.
+    new File(folder.getPath() + "/" + folderMod.getName()).mkdir();
+    folderMod.getMoodleFiles().addAll(folderFiles);
+    folderMod.setPath(folder.getPath() + "/" + folderMod.getName());
+    folderMod.setSnapshotable(false);
+    folder.getMoodleFolders().add(folderMod);
+    return folder;
+}
+````
 
 
 
-#### The two types of Moodle structure
-Since I am an IT student, my courses look like this:
+Notice that all file indexing methods use the `getFile()` method along with `peek()` 
 
-<img alt="image of It course with no Row-Buttons">
-
-But when I shopped for moodle courses that could help me find errors in my software,
-I noticed a lot of courses structured themselves like this: 
-
-<img alt="image of course with Row-Buttons">
-
-I will call these buttons "Row-Buttons". I do prize myself for my creative naming. 
-
-The second one seems to be the original structure, as it incorporates the structure I am familiar with.
-
-I need to make a "wrapper" that first checks for this structure and if it is found, handle it.
-
-Multiple issues. The way to get the content section is the same. Which is shitty because the mt-menu (the navigation menu) does not 
-come with the request for that section. Instead, it is hidden until its associated button is clicked.
-
-The way they connect these, is with a `data-pane` attribute value. Which is a number. I might be able to use this.
-I can get each Row-Button's `data-pane` value, and then, in the folder of that Row-Button, I will invoke my already 
-constructed methods to index that connected mt-menu.
-
-I will make some code for that later, first comes the mod folder. 
+`peek()` is the method used to request the server to in turn make a HEAD request to moodle for a particular file or page.
+`peek()` then returns the received headers. Which will be used by `getFile()` to get the filename and
+Last-Modified header.
 
 
+#### 5. Download Files
+The final part, I had thought this to be the worst part, as you have to download the 
+files on the server first and then transfer them over to the client.
+
+However, it seems to be functioning just fine. The heroku server has been deployed in europe. 
+And the results are better than I could have asked for.
+
+Now downloading is very straightforward: Get the InputStream from the server and transfer the bytes to a new
+`FileOutputStream`   
+
+````
+public void downloadFile(MoodleFile file, String path){
+    // get jsoup response and download file.
+    if(file instanceof MoodleTextFile) // but if it's a text/html file, let it get the string bytes
+        ((MoodleTextFile)file).download(path);
+    else {
+        String dl = file.getDownloadLink();
+        try {
+            dl = URLEncoder.encode(dl, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Connection.Response response = null;
+        try {
+            response = Jsoup.connect(serverUrl+"/download")
+                    .header("moodleServerAuth", serverPassword)
+                    .header("downloadLink", dl)
+                    .method(Connection.Method.POST)
+                    .maxBodySize(0) // 0 = no size limit
+                    .execute();
+        }catch (IOException e){
+            if(e instanceof HttpStatusException){
+                HttpStatusException hse = (HttpStatusException) e;
+                System.out.println(hse.getStatusCode());
+            }
+            System.out.println("File that caused error: "+file.getDownloadLink());
+            throw new RuntimeException(e.getMessage());
+        }
+        try {
+            response.bodyStream().transferTo(new FileOutputStream(path + "/" + file.getName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+````
+That's about it for the backend. 
+I could go into the model classes, but if you're interested in that,
+you might as well visit the github. 
+
+Most of this work is far from perfect. Improvements will be made in time. But for now,
+Moodle Automatic File Retriever is functional. 
+
+Next up is the client GUI. 
+ 
+
+#### The Client layout
+
+The client's UI is still up for debate, even though it is probably going to be very straightforward and (decently) clean.
+
+A few logos, some input and you got half the appeal and functionality. 
+
+I'll make the buttons into Inholland's moodle buttons. For at least a bit of familiarity.
+
+User wants to Connect to a server, download their course, and keep it up to date.
+A user might want to download/update multiple courses. 
+
+I also want the client to save what the user set up to update and download when closing.
+That would make it easier for the user to open Mafr and resume updating courses. 
+
+So I figured something out, and made it look a bit similar to the Inholland Moodle stuff:
+
+<img alt="Client Layout" src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/ClientLayout.png">
+
+This design should cover all that I want to do on the front end. Can't be that confusing to use
+either.
+
+And as bonus, here's the little icon:
+
+<img alt="Moodle Scraper Icon" src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/MoodleScraperIcon.png">
 
 ## Docker
 Wtf is the big deal about this shit? Never understood its goal, but fuck it. A lot of employers pay you
