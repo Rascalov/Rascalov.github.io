@@ -1,10 +1,7 @@
 # Rascalov's Progress Manifesto
-Ik ben Tim, en het maken van een site duurt te lang. Dus ga ik mijn vooruitgang op github pages documenteren.
-
-Ik stel een paar kopjes op, deze worden, in de loop van tijd, gevuld met wat er is geleerd.
+I use this giant readme to rant and document some of the stuff I do.
 
 ## Routing (Netwerken 2)
-Herkansing komt eraan, heb weinig geleerd.
 ### Static routing
 Van wat ik lees, routers kunnen niet zomaar van netwerk naar netwerk hoppen zonder een routing table waarin het destination adres staat.
 Dus per netwerk moet er gezegd worden naar welke directly connected router het naartoe moet. 
@@ -621,7 +618,7 @@ So I figured something out, and made it look a bit similar to the Inholland Mood
 This design should cover all that I want to do on the front end. Can't be that confusing to use
 either.
 
-And as bonus, I :
+And as bonus, I made a shitty edit to the Moodle icon with a scraper:
 
 <img alt="Moodle Scraper Icon" src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/MoodleScraperIcon.png">
 
