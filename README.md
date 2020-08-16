@@ -213,7 +213,7 @@ eligible to enroll.
 
 An example of nr. 1:
 
-<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/EnrollEligible.png" width="500" height="350" alt="Course Enrollment eligible">
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/EnrollEligible.png" width="700" height="350" alt="Course Enrollment eligible">
 
 I see a button with `class=continuebutton` in nr. 3 and 4
 
@@ -264,7 +264,7 @@ My first console app for moodle assumed that only 1 course structure existed:
 
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.png" alt="Course structure 1">
 
-1 menu, with folders. 
+One menu, with folders. 
 
 But, looking into other courses from other moodle categories, I discovered another structure:
 
@@ -273,17 +273,17 @@ But, looking into other courses from other moodle categories, I discovered anoth
 A menu on top, each menu item has its own side menu. In my opinion this structure is superior to the former. 
 To think the IT category still uses the former structure. 
 
-Anyhow, I started with dissecting the menu each own has.
+Anyhow, I started with dissecting the menu each one has.
 
 ##### 3.2 Menu structure
 
 This image explains most of it:
 
-<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.png" width="600" height="350">
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure.png" width="700" height="350">
 
 Then, once you select a course subject, it opens the submenus:
 
-<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure2.png" width="600" height="350">
+<img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/moodleStructure2.png" width="700" height="350">
 
 The script calls distinguish the subfolders by giving them section-Id's. The attribute calls them like so: ``data-section=1``    
 
@@ -621,7 +621,7 @@ So I figured something out, and made it look a bit similar to the Inholland Mood
 This design should cover all that I want to do on the front end. Can't be that confusing to use
 either.
 
-And as bonus, here's the little icon:
+And as bonus, I :
 
 <img alt="Moodle Scraper Icon" src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/MoodleScraperIcon.png">
 
