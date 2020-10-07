@@ -1,5 +1,5 @@
 ---
 title: Routing (CCNA2)
 layout: template
-filename: README.html
+permalink: Routing.md
 --- 
