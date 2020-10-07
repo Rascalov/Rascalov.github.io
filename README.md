@@ -622,6 +622,22 @@ And as bonus, I made a shitty edit to the Moodle icon with a scraper:
 
 <img alt="Moodle Scraper Icon" src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/MoodleScraperIcon.png">
 
+#### A certificate issue
+On the 21st of September 2020, I encountered an SSL handshake issue that ruined the server
+connection to moodle. From what I gather, Moodle renewed/updated their certificate and
+both htmlunit and Jsoup could not update their end. 
+
+HtmlUnit has an option to disable SSL related problem, but Jsoup does not. 
+I ended up using a static initialize method to make sure all certificates were to be 
+allowed. This, I consider a workaround, not a solution. But it worked all the same. 
+
+
+
+## Word Learner: The sequel
+For my php courses, I created a website where you could make word lists and use them for memory 
+exercises. The php site was hot garbage, but the idea was cute. So in the coming weeks,
+I will decide whether to improve upon it or get some other project rolling. 
+
 ## Docker
 Wtf is the big deal about this shit? Never understood its goal, but fuck it. A lot of employers pay you
 if you understand how to work with it. So I will attempt to get the hang of it. 
@@ -760,7 +776,7 @@ End of paragraph
 #### 1.7 Layering in Docker
 He shows an image composed by layers. 
 The instructions from last video could be considered layers. 
-They are read only layers. Instead you can create another layer on top of the 
+They are read only layers. Instead, you can create another layer on top of the 
 desired layer. 
 
 If you want to update it, you can create a new image starting from a specific layer.
@@ -781,6 +797,10 @@ End of Chapter 1.
 
 ### Chapter 2 Ready, Let's head to the installation. 
 
+## Metasploit books and other shenanigans. 
+
+ 
+
 ## ITSM theorie
 Belangrijk zijn de anki kaarten die Bastiaan heeft gemaakt. Leer die en pak wat extra info van de powerpoints
 ## NoSQL theorie
@@ -790,6 +810,14 @@ Anki kaarten en de vragen van de leerlingen leren.
 ## Linux (bash, shell scripts, distro's, etc.)
 ## VIM 
 ## Russisch
+Я плохо говорю по Русский. Но я хочу изучать. Мне надо создать словарь. Нет, а Список слов.
+слова из сайтов которые я посещаю. 
+
+
+
+
+
+
 ## Raspberry Pi camera setup
 I bought a camera add on and made it connect with netcat. So I have a live stream with ~3 ms latency. 
 
