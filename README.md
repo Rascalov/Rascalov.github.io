@@ -843,7 +843,17 @@ With an opening:
 <img src="https://raw.githubusercontent.com/Rascalov/Rascalov.github.io/master/images/flatbox.jpeg" width="500" height="350">
 
 
-   
+## Pi cam: Hindsight and upgrade
+Last time I used the pi cam, I set it up in a cheap plastic/cardboard box and put it outside. This, sadly, was not up
+to the task given the weather we have down here. 
+
+The setup also lacked something I really wanted: pan tilt functionality. Moving the camera around remotely turns me
+on. I decided to look into the options.
+
+Turns out there are a lot of options. Most refer to Servo Motors, simple motors that can turn 180 degrees. I can set
+two servos, one takes the left and right, the other takes up and down.
+
+I bought some servos, along with a kit to help me set up a HAT I can use to put the pan tilt setup on the raspberry pi.
 
 
 
