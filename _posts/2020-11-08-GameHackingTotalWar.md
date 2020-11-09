@@ -60,8 +60,15 @@ From what I gather/imagine, RTW1 is written in C++. So an overlay program should
 ## Cheat engine
 I will post the results I get from fucking around on RTW1 in Cheat Engine.
 
-
 ### Stat stuff
 Movement points are stored in a `float` for each `Unit`. Units in a `squad` have collective movement points
 stored in a different `float`. 
 
+`Command`, `Management`, `subterfuge`, and `influence` are all stored in a 4 byte int value.
+`Management` had one other address with a corresponding value, 
+but since the other 3 do not have such values, it could just be a fluke. 
+
+Usually, generals and other unit leaders get these values increased with `traits`. 
+A `trait` sometimes offers more than just those 4 stats. 
+
+## C and shit

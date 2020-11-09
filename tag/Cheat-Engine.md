@@ -1,4 +1,4 @@
 ---
 layout: tag_index
-tag: Cheat Engine
+tag: Cheat-Engine
 ---

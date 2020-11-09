@@ -1,4 +1,4 @@
 ---
 layout: tag_index
-tag: Rome Total War
+tag: Rome-Total-War
 ---
