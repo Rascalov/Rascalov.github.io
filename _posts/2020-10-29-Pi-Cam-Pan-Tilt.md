@@ -3,7 +3,6 @@ layout: post
 title:  "Raspberry Pi Pan-Tilt surveillance Camera"
 date:   2020-10-29 09:59:21 +0200
 categories: moodle java javafx scraper
-toc: true
 tags:
  - Raspberry-Pi
  - Camera
@@ -32,8 +31,13 @@ weather will be cold. All I need is housing for the pi that is weatherproof.
 
 To accomplish this, I bought a squirrel feeder from amazon for 15 €
  
+So I will.
 
-So I will 
+# Building the pan-tilt: Servos
+Servos are key, motors that can move whatever is attached 180 degrees.
+I set up the servos and just attached the camera with zip-ties.
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/6FMU4WqaPOE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
  
  
 $sudo uv4l -nopreview --auto-video_nr --driver raspicam --encoding mjpeg --width 640 --height 480 --framerate 20 --server-option '--port=9090' --server-option '--max-queued-connections=30' --server-option '--max-streams=25' --server-option '--max-threads=29'
