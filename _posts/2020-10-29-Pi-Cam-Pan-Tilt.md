@@ -39,6 +39,21 @@ I set up the servos and just attached the camera with zip-ties.
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/6FMU4WqaPOE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
  
+
+I bought a squirrel feeder that looked like a bird house and cut out some of the wood. I placed the 
+Pi in and made the Camera and servo motors stick out.
+
+![img]({{ '/images/CamHousing.png' | relative_url }}){: .center-image }*(The housing and camera sticking out)*
+
+
+![img]({{ '/images/CamHousingOpening.png' | relative_url }}){: .center-image }*(Convenient opening, so I can modify easily)*
+
+
+I will nail this to my house and will aim the cam at the front door, and if I wish, the street.
+
+
+For the camera feed, I'll use [User space video 4 linux](https://www.linux-projects.org/uv4l/). 
+Easy management of the feed and will work nicely with the pantilt python program.
  
 $sudo uv4l -nopreview --auto-video_nr --driver raspicam --encoding mjpeg --width 640 --height 480 --framerate 20 --server-option '--port=9090' --server-option '--max-queued-connections=30' --server-option '--max-streams=25' --server-option '--max-threads=29'
 
