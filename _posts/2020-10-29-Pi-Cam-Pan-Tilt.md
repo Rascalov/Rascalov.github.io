@@ -33,6 +33,14 @@ To accomplish this, I bought a squirrel feeder from amazon for 15 €
  
 So I will.
 
+
+Turns out there are a lot of options. Most refer to Servo Motors, simple motors that can turn 180 degrees. I can set
+two servos, one takes the left and right, the other takes up and down.
+
+I bought some servos, along with a kit to help me set up a HAT I can use to put the pan tilt setup on the raspberry pi.
+
+
+
 # Building the pan-tilt: Servos
 Servos are key, motors that can move whatever is attached 180 degrees.
 I set up the servos and just attached the camera with zip-ties.
@@ -55,11 +63,7 @@ I will nail this to my house and will aim the cam at the front door, and if I wi
 For the camera feed, I'll use [User space video 4 linux](https://www.linux-projects.org/uv4l/). 
 Easy management of the feed and will work nicely with the pantilt python program.
  
-$sudo uv4l -nopreview --auto-video_nr --driver raspicam --encoding mjpeg --width 640 --height 480 --framerate 20 --server-option '--port=9090' --server-option '--max-queued-connections=30' --server-option '--max-streams=25' --server-option '--max-threads=29'
+this command sets it up with a limit to 5 connections at a time.
 
-
-Turns out there are a lot of options. Most refer to Servo Motors, simple motors that can turn 180 degrees. I can set
-two servos, one takes the left and right, the other takes up and down.
-
-I bought some servos, along with a kit to help me set up a HAT I can use to put the pan tilt setup on the raspberry pi.
+`sudo uv4l -nopreview --auto-video_nr --driver raspicam --encoding mjpeg --width 640 --height 480 --framerate 30 --server-option '--port=9090' --server-option '--max-queued-connections=30' --server-option '--max-streams=5' --server-option '--max-threads=29'`
 
