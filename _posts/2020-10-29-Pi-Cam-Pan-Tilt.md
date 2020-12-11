@@ -67,3 +67,6 @@ this command sets it up with a limit to 5 connections at a time.
 
 `sudo uv4l -nopreview --auto-video_nr --driver raspicam --encoding mjpeg --width 640 --height 480 --framerate 30 --server-option '--port=9090' --server-option '--max-queued-connections=30' --server-option '--max-streams=5' --server-option '--max-threads=29'`
 
+Result:
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/jzza1MucXAs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
